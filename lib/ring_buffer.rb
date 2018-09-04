@@ -13,13 +13,13 @@ class RingBuffer
   # O(1)
   def [](index)
     check_index(index)
-    store[index]
+    store[(start_idx + index) % capacity]
   end
 
   # O(1)
   def []=(index, val)
     check_index(index)
-    store[index] = value
+    store[(start_idx + index) % capacity] = val
     @length += 1
   end
 
@@ -33,6 +33,7 @@ class RingBuffer
 
   # O(1) ammortized
   def push(val)
+    @start_idx ||= 0 
     resize! if length == capacity 
     store[length] = val 
     @length += 1
@@ -51,11 +52,10 @@ class RingBuffer
 
   # O(1) ammortized
   def unshift(val)
+    @start_idx ||= 0 
     resize! if length == capacity 
-    (length).downto(1) do |idx|
-      store[idx] = store[idx - 1]
-    end
-    store[0] = val;
+    store[length] = val;
+    @start_idx = length;
     @length += 1
   end
 
