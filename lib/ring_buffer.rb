@@ -18,7 +18,7 @@ class RingBuffer
 
   # O(1)
   def []=(index, val)
-    check_index(index)
+    raise "index out of bounds" if index > length
     store[(start_idx + index) % capacity] = val
     @length += 1
   end
