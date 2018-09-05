@@ -7,7 +7,7 @@ class RingBuffer
     self.capacity = capacity
     self.length = 0
     self.store = StaticArray.new(length)
-    self.start_idx = nil  
+    self.start_idx = nil 
   end
 
   # O(1)
@@ -20,29 +20,29 @@ class RingBuffer
   def []=(index, val)
     raise "index out of bounds" if index > length
     store[(start_idx + index) % capacity] = val
-    @length += 1
   end
 
   # O(1)
   def pop
     check_index(0)
-    val = store[length - 1]
-    store[length - 1] = nil 
-    @length -= 1
+    val = self[length - 1]
+    self[length - 1] = nil 
+    self.length -= 1
+    val
   end
 
   # O(1) amortized
   def push(val)
-    @start_idx ||= 0 
+    self.start_idx ||= 0
     resize! if length == capacity 
-    store[length] = val 
-    @length += 1
+    self[length] = val 
+    self.length += 1
   end
 
   # O(1)
   def shift
     check_index(0)
-    val = store[0]
+    val = self[0]
     self[0] = nil 
     self.start_idx = (start_idx + 1) % capacity
     @length -= 1
@@ -54,8 +54,8 @@ class RingBuffer
     @start_idx ||= 0 
     resize! if length == capacity 
     self[capacity - 1] = val;
-    @start_idx = length;
-    @length += 1
+    self.start_idx = length;
+    self.length += 1
   end
 
   protected
@@ -69,9 +69,9 @@ class RingBuffer
   end
 
   def resize!
-    @capacity *= 2
+    self.capacity *= 2
     new_store = StaticArray.new(capacity)
-    0.upto(length) {|idx| new_store[idx] = self[idx]}
-    @store = new_store
+    0.upto(length - 1) {|idx| new_store[idx] = self[idx]}
+    self.store = new_store
   end
 end
