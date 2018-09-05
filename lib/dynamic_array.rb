@@ -73,7 +73,7 @@ class DynamicArray
   def resize!
     self.capacity *= 2
     new_store = StaticArray.new(capacity)
-    0.upto(self.length - 1) {|idx| new_store[idx] = self[idx]}
+    0.upto(length - 1) {|idx| new_store[idx] = self[idx]}
     self.store = new_store
   end
 end
