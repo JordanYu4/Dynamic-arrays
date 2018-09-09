@@ -13,21 +13,28 @@ class QueueWithMax
 
   def initialize
     self.store = RingBuffer.new
-    @vals = Hash.new(0) 
+    @vals = Hash.new(0)
+    @max_val = nil 
   end
 
   def enqueue(val)
     self.store.unshift(val)
     self.vals[val] += 1
+    self.max_val ||= val
+    self.max_val = val if val > max_val
   end
 
   def dequeue
-    self.vals[self.store.pop] -= 1
-    p vals
+    ejected = self.store.pop
+    self.vals[ejected] -= 1
+    self.vals.delete(ejected) if vals[ejected] == 0
+    if ejected == max_val
+      self.max_val = vals.keys.max
+    end
   end
 
   def max
-    vals.keys[-1]
+    max_val
   end
 
   def length
@@ -36,6 +43,6 @@ class QueueWithMax
 
   protected 
 
-  attr_accessor :vals
+  attr_accessor :max_val, :vals
 
 end
